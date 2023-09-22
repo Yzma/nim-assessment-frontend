@@ -7,6 +7,7 @@ function OrderModal({ order, setOrderModal }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [errors, setErrors] = useState([])
 
   const placeOrder = async () => {
     const response = await fetch("http://localhost:3001/api/orders", {
@@ -24,6 +25,32 @@ function OrderModal({ order, setOrderModal }) {
     const data = await response.json();
     return navigate(`/order-confirmation/${data.id}`);
   };
+
+  const onSubmit = async () => {
+    const errorsArray = []
+
+    if(name.length === 0) {
+      errorsArray.push("You must input a name!")
+    }
+
+    const phoneRegex = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+
+    if(phone.length === 0 || !phoneRegex.test(phone)) {
+      errorsArray.push("You must input a valid phone number!")
+    }
+
+    if(address.length === 0) {
+      errorsArray.push("You must input an address!")
+    }
+
+    if(errorsArray.length > 0) {
+      setErrors(errorsArray)
+      return
+    }
+
+    placeOrder()
+  } 
+ 
   return (
     <>
       <div
@@ -40,6 +67,9 @@ function OrderModal({ order, setOrderModal }) {
       />
       <div className={styles.orderModalContent}>
         <h2>Place Order</h2>
+        {errors && 
+          errors.map((e) => <p key={e} className={styles.lineError}>{e}</p>)
+        }
         <form className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="name">
@@ -91,7 +121,7 @@ function OrderModal({ order, setOrderModal }) {
           </button>
           <button
             onClick={() => {
-              placeOrder();
+              onSubmit();
             }}
             className={styles.orderModalPlaceOrder}
           >
