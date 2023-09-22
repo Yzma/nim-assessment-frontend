@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 import OrderConfirmation from "./OrderConfirmation";
 
@@ -11,16 +10,12 @@ export default function ConfirmationPage() {
   const getOrder = async () => {
     const response = await fetch(`http://localhost:3001/api/orders/${id}`);
     const data = await response.json();
-    setOrder(data)
+    setOrder(data);
   };
 
   useEffect(() => {
     getOrder();
   }, []);
 
-  return (
-    <div>
-      {order && <OrderConfirmation order={order} />}
-    </div>
-  )
+  return <div>{order && <OrderConfirmation order={order} />}</div>;
 }
